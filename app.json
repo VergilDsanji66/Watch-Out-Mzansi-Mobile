@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "scheme": "mzansiapp",
+    "name": "mzansi-app",
+    "slug": "mzansi-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "config": {
+        "googleMapsApiKey": "AIzaSyDMC5eEarjHgdmLvtmp0t9swbuTvstZMkY"
+      },
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDMC5eEarjHgdmLvtmp0t9swbuTvstZMkY"
+        }
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
