@@ -53,11 +53,5 @@ download/open expo Go and scan the QR Code
 1. Get a Google Maps API key from the Google Cloud Console
 2. Add your API key to `app.json` in the iOS and Android configurations
 
-## Contributing
-We welcome contributions to improve WatchOut Mzansi! Please feel free to submit pull requests or open issues for any bugs or feature requests.
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Safety Notice
 This app is designed to enhance safety awareness but should not be relied upon as the sole means of ensuring personal safety. Always exercise caution and contact emergency services (10111) in case of immediate danger.
