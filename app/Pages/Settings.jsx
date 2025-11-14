@@ -1,16 +1,17 @@
-import { StyleSheet, Text, View, StatusBar } from 'react-native'
+import { View,StyleSheet, StatusBar ,Text } from 'react-native'
 import React from 'react'
-import Map from './Pages/Map.jsx'
+import Menu from '../Components/Menu'
 
-const Home = () => {
+const Settings = () => {
   return (
     <View style={styles.container}>
-      <Map/>
+      <Text>Settings</Text>
+      <Menu prop="Settings"/>
     </View>
   )
 }
 
-export default Home
+export default Settings
 
 const styles = StyleSheet.create({
   container: {

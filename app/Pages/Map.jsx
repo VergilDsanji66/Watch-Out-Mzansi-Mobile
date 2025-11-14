@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
+import Menu from '../Components/Menu';
 
 const Map = () => {
   const [region, setRegion] = useState(null);
@@ -77,6 +78,7 @@ const Map = () => {
           Heading: {Number.isFinite(heading) ? `${Math.round(heading)}°` : 'N/A'}
         </Text>
       </View>
+      <Menu prop="Map"/>
     </View>
   );
 };

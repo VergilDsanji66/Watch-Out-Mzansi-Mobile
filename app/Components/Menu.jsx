@@ -1,37 +1,20 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 
-const Menu = () => {
-  const [selectedItem, setSelectedItem] = useState('map');
+const Menu = ({ prop }) => {
+  // start with the active item from props
+  const [selectedItem, setSelectedItem] = useState(prop || 'Map');
 
   const menuData = [
-    {
-      id: 'map',
-      label: 'Map',
-      iconLib: Ionicons,
-      iconName: 'map-outline',
-      activeColor: '#1E90FF',
-    },
-    {
-      id: 'reports',
-      label: 'Reports',
-      iconLib: Feather,
-      iconName: 'alert-triangle',
-      activeColor: '#FF4500',
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      iconLib: Ionicons,
-      iconName: 'settings-outline',
-      activeColor: '#895129',
-    },
+    { id: 'Map', label: 'Map', iconLib: Ionicons, iconName: 'map-outline', activeColor: '#1E90FF' },
+    { id: 'Reports', label: 'Reports', iconLib: Feather, iconName: 'alert-triangle', activeColor: '#FF4500' },
+    { id: 'Settings', label: 'Settings', iconLib: Ionicons, iconName: 'settings-outline', activeColor: '#895129' },
   ];
 
   const handleSelected = (itemId) => {
     setSelectedItem(itemId);
-    // later: navigate based on itemId
   };
 
   return (
@@ -41,29 +24,37 @@ const Menu = () => {
         const isActive = selectedItem === item.id;
 
         return (
-          <Pressable
+          <Link
             key={item.id}
-            onPress={() => handleSelected(item.id)}
-            style={styles.menuItem}
+            href={item.id === 'Map' ? '/' : `/Pages/${item.id}`}
+            asChild
           >
-            <View
-              style={styles.iconContainer}
+            <Pressable
+              onPress={() => handleSelected(item.id)}
+              style={styles.menuItem}
             >
-              <IconComponent
-                name={item.iconName}
-                size={24}
-                color={isActive ? item.activeColor : '#555'}
-              />
-            </View>
-            <Text
-              style={[
-                styles.menuText,
-                isActive && { color: item.activeColor },
-              ]}
-            >
-              {item.label}
-            </Text>
-          </Pressable>
+              <View
+                style={[
+                  styles.iconContainer,
+                  isActive && { backgroundColor: item.activeColor + '20' }, // light highlight
+                ]}
+              >
+                <IconComponent
+                  name={item.iconName}
+                  size={24}
+                  color={isActive ? item.activeColor : '#555'}
+                />
+              </View>
+              <Text
+                style={[
+                  styles.menuText,
+                  isActive && { color: item.activeColor },
+                ]}
+              >
+                {item.label}
+              </Text>
+            </Pressable>
+          </Link>
         );
       })}
     </View>
