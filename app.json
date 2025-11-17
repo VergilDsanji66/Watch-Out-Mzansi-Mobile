@@ -1,8 +1,8 @@
 {
   "expo": {
-    "scheme": "mzansiapp",
-    "name": "mzansi-app",
-    "slug": "mzansi-app",
+    "scheme": "watchoutmzansi",
+    "name": "Watch Out Mzansi Mobile",
+    "slug": "watch-out-mzansi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

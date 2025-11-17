@@ -18,7 +18,10 @@ const Menu = ({ prop }) => {
   };
 
   return (
-    <View style={styles.menuContainer}>
+    <View style={[
+        selectedItem === 'Map' ? styles.menuContainer : styles.menuSecondContainer
+      ]}
+>
       {menuData.map((item) => {
         const IconComponent = item.iconLib;
         const isActive = selectedItem === item.id;
@@ -82,6 +85,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  menuSecondContainer: {
+  position: 'relative',
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  paddingVertical: 10,
+  paddingHorizontal: 12,
+  borderWidth: 2,
+  borderRadius: 16,
+  bottom: 18,
+  left: 18,
+  right: 18,
+  width: '90%',
+  backgroundColor: '#ffffff',
+  alignItems: 'center',
+},
   menuItem: {
     alignItems: 'center',
     justifyContent: 'center',
