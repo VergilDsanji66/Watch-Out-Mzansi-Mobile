@@ -45,7 +45,7 @@ const Menu = ({ prop }) => {
                 <IconComponent
                   name={item.iconName}
                   size={24}
-                  color={isActive ? item.activeColor : '#555'}
+                  color={isActive ? item.activeColor : '#000'}
                 />
               </View>
               <Text
@@ -77,13 +77,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff3d',
     alignItems: 'center',
-    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
-    elevation: 3,
   },
   menuSecondContainer: {
   position: 'relative',
@@ -111,7 +109,7 @@ const styles = StyleSheet.create({
   menuText: {
     marginTop: 4,
     fontSize: 12,
-    color: '#555',
+    color: '#000',
     fontWeight: '500',
   },
 });

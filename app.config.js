@@ -19,4 +19,8 @@ export default ({ config }) => ({
       },
     },
   },
+  plugins: [
+    ...(config.plugins || []), // keep existing plugins if any
+    'expo-font',
+  ],
 });

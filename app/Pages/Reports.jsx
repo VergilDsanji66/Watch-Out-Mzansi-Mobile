@@ -19,6 +19,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Link, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 
+import { addReport, reportsDB } from '../../data/data';
 import Menu from '../Components/Menu';
 
 const CRIME_TYPES = [
@@ -144,163 +145,159 @@ const Reports = () => {
       latLng: selectedLatLng,
       image
     };
-    console.log("Report Submitted →", reportData);
-    alert("Report submitted! Check console for data.");
+
+    addReport(reportData);
+
+    console.log("All Reports →", reportsDB);
+    alert("Report saved to temporary DB!");
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <KeyboardAwareScrollView
-          contentContainerStyle={styles.ReportContainer}
-          enableOnAndroid
-          extraScrollHeight={20}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+    <View style={styles.container}>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={20}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.ReportContainer}
+        keyboardOpeningTime={0}
+        enableAutomaticScroll
+        extraHeight={120}
+      >
+        <Text style={styles.title}>Make Your Report</Text>
+        <Text style={styles.description}>
+          Your experience matters. Help protect others by sharing what happened.
+        </Text>
+        {/* Crime Type Search */}
+        <View>
+          <TextInput
+            style={styles.input}
+            placeholder="Search Crime Type"
+            value={searchText}
+            onChangeText={handleSearch}
+          />
+          {showDropdown && filteredList.length > 0 && (
+            <View style={styles.dropdown}>
+              {filteredList.map((item) => (
+                <TouchableOpacity key={item} onPress={() => toggleCrimeSelection(item)}>
+                  <Text style={styles.item}>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Selected Crime Tags */}
+        <View style={styles.selectedContainer}>
+          {selectedCrime.map((crime) => (
+            <View key={crime} style={styles.selectedWrapper}>
+              <Text style={styles.selected}>{crime}</Text>
+              <Pressable onPress={() => removeCrime(crime)}>
+                <Text style={styles.removeX}>✕</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
+
+        {/* Date Selector */}
+        <Pressable
+          onPress={() => setShowDatePicker(true)}
+          style={styles.selector}
         >
+          <Text>Select Date: {date.toDateString()}</Text>
+        </Pressable>
 
-          <Text style={styles.title}>Make Your Report</Text>
-          <Text style={styles.description}>
-            Your experience matters. Help protect others by sharing what happened.
-          </Text>
+        {/* Time Selector */}
+        <Pressable
+          onPress={() => setShowTimePicker(true)}
+          style={styles.selector}
+        >
+          <Text>Select Time: {date.toLocaleTimeString()}</Text>
+        </Pressable>
+        {showDatePicker && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onChange}
+          />
+        )}
+        {showTimePicker && (
+          <DateTimePicker
+            value={date}
+            mode="time"
+            onChange={onChange}
+          />
+        )}
 
-          {/* Crime Type Search */}
-          <View>
-            <TextInput
-              style={styles.input}
-              placeholder="Search Crime Type"
-              value={searchText}
-              onChangeText={handleSearch}
-            />
+        {/* Additional Info */}
+        <TextInput
+          style={[styles.input, { height: 100, marginTop: 10 }]}
+          placeholder="Additional Details (optional)"
+          multiline
+          value={additionalInfo}
+          onChangeText={setAdditionalInfo}
+        />
 
-            {showDropdown && filteredList.length > 0 && (
-              <View style={styles.dropdown}>
-                {filteredList.map((item) => (
-                  <TouchableOpacity key={item} onPress={() => toggleCrimeSelection(item)}>
-                    <Text style={styles.item}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
+        {/* Map Address */}
+        <Text style={styles.underline}>Select Location:</Text>
+        <Link
+          href={{ pathname: "/Pages/Map", params: { id: "selectLocation" } }}
+          asChild
+        >
+          <Pressable style={{ marginTop: 10 }}>
+            <Text style={styles.input}>Use Google Maps</Text>
+          </Pressable>
+        </Link>
+        {selectedAddress ? (
+          <View style={styles.selectedAddressWrapper}>
+            <Text style={styles.selectedAddress}>{selectedAddress}</Text>
+            <Pressable onPress={() => setSelectedAddress('')}>
+              <Text style={styles.removeX}>✕</Text>
+            </Pressable>
           </View>
+        ) : null}
+        <Text style={styles.centerText}>OR</Text>
 
-          {/* Selected Crime Tags */}
-          <View style={styles.selectedContainer}>
-            {selectedCrime.map((crime) => (
-              <View key={crime} style={styles.selectedWrapper}>
-                <Text style={styles.selected}>{crime}</Text>
-                <Pressable onPress={() => removeCrime(crime)}>
+        {/* Search by address */}
+        <TextInput
+          style={styles.input}
+          placeholder="Type address or area"
+          value={query}
+          onChangeText={fetchPlaces}
+        />
+        {locationResults.length > 0 && (
+          <View style={styles.dropdown}>
+            {locationResults.map((item) => (
+              <View key={item.place_id} style={styles.resultRow}>
+                <TouchableOpacity onPress={() => selectLocationResult(item)}>
+                  <Text style={styles.item}>{item.description}</Text>
+                </TouchableOpacity>
+                <Pressable onPress={() => setLocationResults(locationResults.filter(i => i.place_id !== item.place_id))}>
                   <Text style={styles.removeX}>✕</Text>
                 </Pressable>
               </View>
             ))}
           </View>
+        )}
 
-          {/* Date Selector */}
-          <Pressable
-            onPress={() => setShowDatePicker(true)}
-            style={styles.selector}
-          >
-            <Text>Select Date: {date.toDateString()}</Text>
-          </Pressable>
+        {/* Image Upload */}
+        <Text style={styles.underline}>Optional Image Upload:</Text>
+        <Pressable style={styles.selector} onPress={pickImage}>
+          <Text>{image ? "Change Image" : "Upload Image"}</Text>
+        </Pressable>
+        {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+        
+        {/* Submit */}
+        <Pressable style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Submit Report</Text>
+        </Pressable>
 
-          {/* Time Selector */}
-          <Pressable
-            onPress={() => setShowTimePicker(true)}
-            style={styles.selector}
-          >
-            <Text>Select Time: {date.toLocaleTimeString()}</Text>
-          </Pressable>
+      </KeyboardAwareScrollView>
 
-          {showDatePicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={onChange}
-            />
-          )}
+      <Menu prop="Reports" />
 
-          {showTimePicker && (
-            <DateTimePicker
-              value={date}
-              mode="time"
-              onChange={onChange}
-            />
-          )}
-
-          {/* Additional Info */}
-          <TextInput
-            style={[styles.input, { height: 100, marginTop: 10 }]}
-            placeholder="Additional Details (optional)"
-            multiline
-            value={additionalInfo}
-            onChangeText={setAdditionalInfo}
-          />
-
-          {/* Map Address */}
-          <Text style={styles.underline}>Select Location:</Text>
-          <Link
-            href={{ pathname: "/Pages/Map", params: { id: "selectLocation" } }}
-            asChild
-          >
-            <Pressable style={{ marginTop: 10 }}>
-              <Text style={styles.input}>Use Google Maps</Text>
-            </Pressable>
-          </Link>
-
-          {selectedAddress ? (
-            <View style={styles.selectedAddressWrapper}>
-              <Text style={styles.selectedAddress}>{selectedAddress}</Text>
-              <Pressable onPress={() => setSelectedAddress('')}>
-                <Text style={styles.removeX}>✕</Text>
-              </Pressable>
-            </View>
-          ) : null}
-
-          <Text style={styles.centerText}>OR</Text>
-
-          {/* Search by address */}
-          <TextInput
-            style={styles.input}
-            placeholder="Type address or area"
-            value={query}
-            onChangeText={fetchPlaces}
-          />
-
-          {locationResults.length > 0 && (
-            <View style={styles.dropdown}>
-              {locationResults.map((item) => (
-                <View key={item.place_id} style={styles.resultRow}>
-                  <TouchableOpacity onPress={() => selectLocationResult(item)}>
-                    <Text style={styles.item}>{item.description}</Text>
-                  </TouchableOpacity>
-                  <Pressable onPress={() => setLocationResults(locationResults.filter(i => i.place_id !== item.place_id))}>
-                    <Text style={styles.removeX}>✕</Text>
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Image Upload */}
-          <Text style={styles.underline}>Optional Image Upload:</Text>
-          <Pressable style={styles.selector} onPress={pickImage}>
-            <Text>{image ? "Change Image" : "Upload Image"}</Text>
-          </Pressable>
-          {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
-
-          {/* Submit */}
-          <Pressable style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Submit Report</Text>
-          </Pressable>
-
-        </KeyboardAwareScrollView>
-
-        <Menu prop="Reports" />
-
-      </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 
