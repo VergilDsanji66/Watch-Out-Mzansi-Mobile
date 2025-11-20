@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View, StatusBar } from 'react-native'
 import React from 'react'
-import Map from './Pages/Map.jsx'
+import MainMap from './Pages/MainMap'
+
 
 const Home = () => {
   return (
     <View style={styles.container}>
-      <Map/>
+      <MainMap/>
     </View>
   )
 }
