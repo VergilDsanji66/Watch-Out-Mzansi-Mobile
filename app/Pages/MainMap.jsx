@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Menu from '../Components/Menu';
 import { reportsDB } from '../../data/data';
 import LocationSearch from '../Components/LocationSearch';
+
+// Icons
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 const CRIME_COLORS = {
   Theft: "#1E90FF",
@@ -29,6 +33,25 @@ const MainMap = () => {
 
   const mapRef = useRef(null);
 
+  // Custom centerIcon function
+  const centerOnUser = async () => {
+    let { coords } = await Location.getCurrentPositionAsync({});
+    mapRef.current.animateToRegion({
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
+    })
+  }
+
+  // custom compass function
+  const faceNorth = () => {
+    mapRef.current.animateCamera({
+      heading: 0,
+      pitch: 0,
+    })
+  }
+
   // Load reports
   useEffect(() => {
     setReports([...reportsDB]);
@@ -50,8 +73,8 @@ const MainMap = () => {
       setRegion({
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
       });
 
       subscription = await Location.watchPositionAsync(
@@ -96,6 +119,8 @@ const MainMap = () => {
         provider={MapView.PROVIDER_GOOGLE}
         initialRegion={region}
         showsUserLocation
+        showsMyLocationButton={false}
+        showsCompass={false}
       >
         {/* Selected location marker */}
         {selectedLocation.lat && selectedLocation.lng && (
@@ -147,6 +172,17 @@ const MainMap = () => {
         })}
       </MapView>
 
+      <View style={styles.customButtons}>
+        {/* Custom compass */}
+        <TouchableOpacity style={styles.myLocation} onPress={faceNorth}>
+          <Entypo name="compass" size={35} color="#fff" />
+        </TouchableOpacity>
+        {/* Show my Location custom button */}
+        <TouchableOpacity style={styles.myLocation} onPress={centerOnUser}>
+          <MaterialIcons name="my-location" size={35} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
       <Menu prop="Map" />
     </View>
   );
@@ -158,4 +194,17 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  customButtons:{
+    position: 'absolute',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 7,
+    bottom: 115,
+    right: 20,
+  },
+  myLocation: {
+    padding: 5,
+    borderRadius: 10,
+    backgroundColor: '#ffffff3d',
+  },
 });

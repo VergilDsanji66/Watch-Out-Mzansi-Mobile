@@ -45,13 +45,19 @@ const Menu = ({ prop }) => {
                 <IconComponent
                   name={item.iconName}
                   size={24}
-                  color={isActive ? item.activeColor : '#000'}
+                  color={
+                    isActive ? item.activeColor 
+                    : selectedItem === 'Map' ? '#fff' : '#000' 
+                    }
                 />
               </View>
               <Text
                 style={[
                   styles.menuText,
-                  isActive && { color: item.activeColor },
+                  {color: isActive
+                    ? item.activeColor : selectedItem === 'Map'
+                    ? '#fff': '#000'
+                  }
                 ]}
               >
                 {item.label}
@@ -71,7 +77,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    bottom: 24,
+    bottom: 30,
     left: 16,
     right: 16,
     paddingVertical: 10,
