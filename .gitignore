@@ -1,3 +1,55 @@
-node_modules
-.expo/
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies - for both frontend and backend
+node_modules/
+*/node_modules/  # This covers node_modules in any subdirectory
+
+# Expo (frontend specific)
+frontend/.expo/
+frontend/dist/
+frontend/web-build/
+frontend/expo-env.d.ts
+
+# Native (frontend specific)
+frontend/.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro (frontend specific)
+frontend/.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files - for BOTH frontend and backend
 .env
+.env.local
+.env*.local
+.env.development
+.env.production
+.env.test
+frontend/.env*
+backend/.env*
+
+# typescript
+*.tsbuildinfo
+
+app-example
+
+# generated native folders (frontend specific)
+frontend/ios
+frontend/android
+
+# Backend specific ignores (if any)
+backend/logs/
+backend/temp/
